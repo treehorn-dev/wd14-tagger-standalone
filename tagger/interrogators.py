@@ -24,6 +24,7 @@ interrogators: dict[str, AbsInterrogator] = {
         'WD14 ConvNeXTV2 v1',
         # the name is misleading, but it's v1
         repo_id='SmilingWolf/wd-v1-4-convnextv2-tagger-v2',
+        model_key='wd14-convnextv2.v1',
     ),
     'wd14-swinv2-v1': WaifuDiffusionInterrogator(
         'WD14 SwinV2 v1',

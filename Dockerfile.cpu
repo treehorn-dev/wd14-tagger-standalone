@@ -1,0 +1,19 @@
+FROM python:3.11-slim-bookworm
+
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends curl \
+ && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY pyproject.toml README.md run.py /app/
+COPY tagger /app/tagger
+COPY scripts/fetch-hf-assets.sh /app/scripts/fetch-hf-assets.sh
+
+RUN python -m pip install --upgrade pip setuptools wheel
+RUN python -m pip install --no-cache-dir .
+RUN /bin/sh /app/scripts/fetch-hf-assets.sh /models/wd14-convnextv2.v1
+
+ENV WD14_MODEL_ROOT=/models
+
+ENTRYPOINT ["wd14-tagger"]

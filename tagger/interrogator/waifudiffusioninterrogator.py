@@ -13,6 +13,7 @@ import re
 tag_escape_pattern = re.compile(r'([\\()])')
 
 from tagger.interrogator.interrogator import AbsInterrogator
+from tagger.model_assets import resolve_local_asset_pair
 import tagger.dbimutils as dbimutils
 
 class WaifuDiffusionInterrogator(AbsInterrogator):
@@ -29,6 +30,17 @@ class WaifuDiffusionInterrogator(AbsInterrogator):
         self.kwargs = kwargs
 
     def download(self) -> Tuple[os.PathLike, os.PathLike]:
+        model_key = self.kwargs.get('model_key')
+        if model_key:
+            resolved = resolve_local_asset_pair(
+                model_key=model_key,
+                model_filename=self.model_path,
+                tags_filename=self.tags_path,
+            )
+            if resolved is not None:
+                print(f"Loading {self.name} model files from WD14_MODEL_ROOT", file=sys.stderr)
+                return resolved
+
         print(f"Loading {self.name} model file from {self.kwargs['repo_id']}", file=sys.stderr)
 
         model_path = Path(hf_hub_download(
